@@ -32,6 +32,7 @@
 #include "php_globals.h"
 #include "php_variables.h"
 #include "rfc1867.h"
+#include "zend_ini.h"
 
 #define DEBUG_FILE_UPLOAD ZEND_DEBUG
 
@@ -466,6 +467,13 @@ static int find_boundary(multipart_buffer *self, char *boundary TSRMLS_DC)
 	return 0;
 }
 
+static zend_bool php_mime_should_save_hdr(const char *name)
+{
+	return !strcasecmp(name, "Content-Disposition")
+		|| !strcasecmp(name, "Content-Type");
+}
+
+static char *php_mime_get_hdr_value(zend_llist header, char *key);
 
 /* parse headers */
 static int multipart_buffer_headers(multipart_buffer *self, zend_llist *header TSRMLS_DC)
@@ -473,6 +481,7 @@ static int multipart_buffer_headers(multipart_buffer *self, zend_llist *header T
 	char *line;
 	mime_header_entry prev_entry, entry;
 	int prev_len, cur_len;
+	int skip_continuation = 0;
 	
 	/* didn't find boundary, abort */
 	if (!find_boundary(self, self->boundary TSRMLS_CC)) {
@@ -495,12 +504,22 @@ static int multipart_buffer_headers(multipart_buffer *self, zend_llist *header T
 
 		if (value) {
 			*value = 0;
-			do { value++; } while(isspace(*value));
+
+			/* Keep only headers we use, and ignore duplicates */
+			if (!php_mime_should_save_hdr(key)
+					|| php_mime_get_hdr_value(*header, key)) {
+				/* also drop the continuation lines of this header */
+				skip_continuation = 1;
+				continue;
+			}
+			skip_continuation = 0;
+
+			do { value++; } while(isspace((unsigned char)*value));
 
 			entry.value = estrdup(value);
 			entry.key = estrdup(key);
 
-		} else if (zend_llist_count(header)) { /* If no ':' on the line, add to previous line */
+		} else if (zend_llist_count(header) && !skip_continuation) { /* If no ':' on the line, add to previous line */
 
 			prev_len = strlen(prev_entry.value);
 			cur_len = strlen(line);
@@ -584,11 +603,11 @@ static char *php_ap_getword(char **line, char stop)
 }
 
 
-static char *substring_conf(char *start, int len, char quote TSRMLS_DC)
+static char *substring_conf(char *start, size_t len, char quote TSRMLS_DC)
 {
 	char *result = emalloc(len + 2);
 	char *resp = result;
-	int i;
+	size_t i;
 
 	for (i = 0; i < len; ++i) {
 		if (start[i] == '\\' && (start[i + 1] == '\\' || (quote && start[i + 1] == quote))) {
@@ -653,7 +672,7 @@ look_for_quote:
 			}
 		}
 
-		res = substring_conf(str + 1, strend - str - 1, quote TSRMLS_CC);
+		res = substring_conf(str + 1, (size_t)(strend - str - 1), quote TSRMLS_CC);
 
 		if (*strend == quote) {
 			++strend;
@@ -665,7 +684,7 @@ look_for_quote:
 		while (*strend && !isspace(*strend)) {
 			++strend;
 		}
-		res = substring_conf(str, strend - str, 0 TSRMLS_CC);
+		res = substring_conf(str, (size_t)(strend - str), 0 TSRMLS_CC);
 	}
 
 	while (*strend && isspace(*strend)) {
@@ -794,11 +813,20 @@ SAPI_API SAPI_POST_HANDLER_FUNC(rfc1867_post_handler)
 	zend_llist header;
 	void *event_extra_data = NULL;
 	int llen = 0;
+	int body_parts_cnt = INI_INT("max_multipart_body_parts");
+	int body_parts_limit;
 
 	if (SG(request_info).content_length > SG(post_max_size)) {
 		sapi_module.sapi_error(E_WARNING, "POST Content-Length of %ld bytes exceeds the limit of %ld bytes", SG(request_info).content_length, SG(post_max_size));
 		return;
 	}
+
+	if (body_parts_cnt < 0) {
+		/* There is no max_input_vars or max_file_uploads to derive the limit
+		 * from, so use their default sum (1000 + 20) */
+		body_parts_cnt = 1020;
+	}
+	body_parts_limit = body_parts_cnt;
 
 	/* Get the boundary */
 	boundary = strstr(content_type_dup, "boundary");
@@ -878,6 +906,11 @@ SAPI_API SAPI_POST_HANDLER_FUNC(rfc1867_post_handler)
 			char *pair=NULL;
 			int end=0;
 			
+			if (--body_parts_cnt < 0) {
+				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Multipart body parts limit exceeded %d. To increase the limit change max_multipart_body_parts in php.ini.", body_parts_limit);
+				goto fileupload_done;
+			}
+
 			while (isspace(*cd)) {
 				++cd;
 			}
