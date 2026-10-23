@@ -1121,6 +1121,9 @@ ZEND_API int shift_right_function(zval *result, zval *op1, zval *op2 TSRMLS_DC)
 /* must support result==op1 */
 ZEND_API int add_char_to_string(zval *result, zval *op1, zval *op2)
 {
+	if (op1->value.str.len > INT_MAX - 2) {
+		zend_mm_safe_error_ex("String size overflow");
+	}
 	result->value.str.len = op1->value.str.len + 1;
 	result->value.str.val = (char *) erealloc(op1->value.str.val, result->value.str.len+1);
     result->value.str.val[result->value.str.len - 1] = (char) op2->value.lval;
@@ -1133,7 +1136,12 @@ ZEND_API int add_char_to_string(zval *result, zval *op1, zval *op2)
 /* must support result==op1 */
 ZEND_API int add_string_to_string(zval *result, zval *op1, zval *op2)
 {
-	int length = op1->value.str.len + op2->value.str.len;
+	int length;
+
+	if (op1->value.str.len > INT_MAX - 1 - op2->value.str.len) {
+		zend_mm_safe_error_ex("String size overflow");
+	}
+	length = op1->value.str.len + op2->value.str.len;
 
 	result->value.str.val = (char *) erealloc(op1->value.str.val, length+1);
     memcpy(result->value.str.val+op1->value.str.len, op2->value.str.val, op2->value.str.len);
@@ -1164,6 +1172,9 @@ ZEND_API int concat_function(zval *result, zval *op1, zval *op2 TSRMLS_DC)
 	}
 	if (use_copy2) {
 		op2 = &op2_copy;
+	}
+	if (op1->value.str.len > INT_MAX - 1 - op2->value.str.len) {
+		zend_mm_safe_error_ex("String size overflow");
 	}
 	if (result==op1) {	/* special case, perform operations on result */
 		uint res_len = op1->value.str.len + op2->value.str.len;
