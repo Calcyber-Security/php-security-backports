@@ -1505,6 +1505,10 @@ void php_request_shutdown(void *dummy)
 		PG(last_error_file) = NULL;
 	}
 
+	/* may be used by zend_error before php_request_startup() */
+	PG(error_handling) = EH_NORMAL;
+	PG(exception_class) = NULL;
+
 	/* 7. Shutdown scanner/executor/compiler and restore ini entries */
 	zend_deactivate(TSRMLS_C);
 
@@ -1542,8 +1546,6 @@ void php_request_shutdown(void *dummy)
 
 	/* May be accessed before php_request_startup() */
 	PG(modules_activated) = 0;
-	PG(error_handling) = EH_NORMAL;
-	PG(exception_class) = NULL;
 }
 /* }}} */
 
