@@ -83,7 +83,7 @@ static void zend_mm_panic(const char *message)
 #if ZEND_DEBUG && defined(HAVE_KILL) && defined(HAVE_GETPID)
 	kill(getpid(), SIGSEGV);
 #else
-	exit(1);
+	_exit(1);
 #endif
 }
 
@@ -1263,6 +1263,41 @@ ZEND_API void zend_mm_shutdown(zend_mm_heap *heap, int full_shutdown, int silent
 	}
 }
 
+ZEND_API void zend_mm_safe_error_ex(const char *format, ...)
+{
+	const char *error_filename;
+	uint error_lineno;
+	char buf[1024];
+	va_list args;
+	TSRMLS_FETCH();
+
+	if (zend_is_compiling(TSRMLS_C)) {
+		error_filename = zend_get_compiled_filename(TSRMLS_C);
+		error_lineno = zend_get_compiled_lineno(TSRMLS_C);
+	} else if (EG(in_execution)) {
+		error_filename = EG(active_op_array)?EG(active_op_array)->filename:NULL;
+		error_lineno = EG(opline_ptr)?(*EG(opline_ptr))->lineno:0;
+	} else {
+		error_filename = NULL;
+		error_lineno = 0;
+	}
+	if (!error_filename) {
+		error_filename = "Unknown";
+	}
+
+	va_start(args, format);
+	vsnprintf(buf, sizeof(buf), format, args);
+	va_end(args);
+
+	fprintf(stderr, "\nFatal error: %s in %s on line %d\n", buf, error_filename, error_lineno);
+/* See http://support.microsoft.com/kb/190351 */
+#ifdef PHP_WIN32
+	fflush(stderr);
+#endif
+
+	_exit(1);
+}
+
 static void zend_mm_safe_error(zend_mm_heap *heap,
 	const char *format,
 	size_t limit,
@@ -1272,55 +1307,15 @@ static void zend_mm_safe_error(zend_mm_heap *heap,
 #endif
 	size_t size)
 {
-	if (heap->reserve) {
-		zend_mm_free(heap, heap->reserve);
-		heap->reserve = NULL;
-	}
-	if (heap->overflow == 0) {
-		char *error_filename;
-		uint error_lineno;
-		TSRMLS_FETCH();
-		if (zend_is_compiling(TSRMLS_C)) {
-			error_filename = zend_get_compiled_filename(TSRMLS_C);
-			error_lineno = zend_get_compiled_lineno(TSRMLS_C);
-		} else if (EG(in_execution)) {
-			error_filename = EG(active_op_array)?EG(active_op_array)->filename:NULL;
-			error_lineno = EG(opline_ptr)?(*EG(opline_ptr))->lineno:0;
-		} else {
-			error_filename = NULL;
-			error_lineno = 0;
-		}
-		if (!error_filename) {
-			error_filename = "Unknown";
-		}
-		heap->overflow = 1;
-		zend_try {
-			zend_error(E_ERROR,
-				format,
-				limit,
+	(void) heap;
+
+	zend_mm_safe_error_ex(format,
+		limit,
 #if ZEND_DEBUG
-				filename,
-				lineno,
+		filename,
+		lineno,
 #endif
-				size);
-		} zend_catch {
-			if (heap->overflow == 2) {
-				fprintf(stderr, "\nFatal error: ");
-				fprintf(stderr,
-					format,
-					limit,
-#if ZEND_DEBUG
-					filename,
-					lineno,
-#endif
-					size);
-				fprintf(stderr, " in %s on line %d\n", error_filename, error_lineno);
-			}
-		} zend_end_try();
-	} else {
-		heap->overflow = 2;
-	}
-	zend_bailout();
+		size);
 }
 
 static void *_zend_mm_alloc_int(zend_mm_heap *heap, size_t size ZEND_FILE_LINE_DC ZEND_FILE_LINE_ORIG_DC) ZEND_ATTRIBUTE_MALLOC;
@@ -1918,7 +1913,7 @@ ZEND_API void *_safe_emalloc(size_t nmemb, size_t size, size_t offset ZEND_FILE_
 		}
 	}
 
-	zend_error(E_ERROR, "Possible integer overflow in memory allocation (%zd * %zd + %zd)", nmemb, size, offset);
+	zend_mm_safe_error_ex("Possible integer overflow in memory allocation (%zu * %zu + %zu)", nmemb, size, offset);
 	return 0;
 }
 
@@ -1943,7 +1938,7 @@ ZEND_API void *_safe_malloc(size_t nmemb, size_t size, size_t offset)
 		}
 	}
 
-	zend_error(E_ERROR, "Possible integer overflow in memory allocation (%zd * %zd + %zd)", nmemb, size, offset);
+	zend_mm_safe_error_ex("Possible integer overflow in memory allocation (%zu * %zu + %zu)", nmemb, size, offset);
 	return 0;
 }
 
