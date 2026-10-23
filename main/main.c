@@ -1223,6 +1223,10 @@ void php_request_shutdown(void *dummy)
 	} zend_end_try();
 
 		
+	/* may be used by zend_error before php_request_startup() */
+	PG(error_handling) = EH_NORMAL;
+	PG(exception_class) = NULL;
+
 	zend_deactivate(TSRMLS_C);
 
 	zend_try {
@@ -1251,8 +1255,6 @@ void php_request_shutdown(void *dummy)
 
 	/* May be accessed before php_request_startup() */
 	PG(modules_activated) = 0;
-	PG(error_handling) = EH_NORMAL;
-	PG(exception_class) = NULL;
 }
 /* }}} */
 
