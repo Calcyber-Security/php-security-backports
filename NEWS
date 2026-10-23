@@ -1,6 +1,14 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-?? ??? ????, PHP 8.1.27
+23 Oct 2026, PHP 8.1.27-p1
+
+- Core:
+  . Fixed GHSA-w8hw-w9fx-j79w (Avoid state corruption via bailout).
+    (CVE-2026-109618) (Arnaud, ilutov)
+  . Fixed GHSA-6wmf-4rv5-p3rp (Avoid state corruption via bailout).
+    (CVE-2026-109619) (Arnaud, ilutov)
+
+21 Dec 2023, PHP 8.1.27
 
 - Core:
   . Fixed oss-fuzz #54325 (Use-after-free of name in var-var with malicious
