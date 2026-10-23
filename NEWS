@@ -1,5 +1,11 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+23 Oct 2026, PHP 5.0.0-p1
+- Fixed GHSA-w8hw-w9fx-j79w (Avoid state corruption via bailout).
+  (CVE-2026-109618) (Arnaud, ilutov)
+- Fixed GHSA-6wmf-4rv5-p3rp (Avoid state corruption via bailout).
+  (CVE-2026-109619) (Arnaud, ilutov)
+
 13 Jul 2004, PHP 5.0.0
 - Updated PCRE to provide better error handling in certain cases. (Andrei)
 - Changed doc comments to require a single white space after '/**'. (Marcus)
