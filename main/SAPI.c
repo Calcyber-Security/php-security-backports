@@ -503,6 +503,7 @@ SAPI_API void sapi_deactivate(TSRMLS_D)
 	zend_llist_destroy(&SG(sapi_headers).headers);
 	if (SG(request_info).post_data) {
 		efree(SG(request_info).post_data);
+		SG(request_info).post_data = NULL;
 	}  else 	if (SG(server_context)) {
 		if(sapi_module.read_post) { 
 			/* make sure we've consumed all request input data */
@@ -516,6 +517,7 @@ SAPI_API void sapi_deactivate(TSRMLS_D)
 	}
 	if (SG(request_info).raw_post_data) {
 		efree(SG(request_info).raw_post_data);
+		SG(request_info).raw_post_data = NULL;
 	} 
 	if (SG(request_info).auth_user) {
 		efree(SG(request_info).auth_user);
