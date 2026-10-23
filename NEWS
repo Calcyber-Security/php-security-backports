@@ -1,5 +1,11 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+23 Oct 2026, PHP 5.2.12-p1
+- Fixed GHSA-w8hw-w9fx-j79w (Avoid state corruption via bailout).
+  (CVE-2026-109618) (Arnaud, ilutov)
+- Fixed GHSA-6wmf-4rv5-p3rp (Avoid state corruption via bailout).
+  (CVE-2026-109619) (Arnaud, ilutov)
+
 17 Dec 2009, PHP 5.2.12
 
 - Added LIBXML_PARSEHUGE constant to overrides the maximum text size of a
