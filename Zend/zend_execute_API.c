@@ -299,6 +299,10 @@ void shutdown_executor(void) /* {{{ */
 		zend_stack_clean(&EG(user_exception_handlers), (void (*)(void *))ZVAL_PTR_DTOR, 1);
 	} zend_end_try();
 
+	/* may be used by zend_error before init_executor */
+	ZVAL_UNDEF(&EG(user_error_handler));
+	ZVAL_UNDEF(&EG(user_exception_handler));
+
 	zend_try {
 		/* Cleanup static data for functions and arrays.
 		 * We need a separate cleanup stage because of the following problem:
@@ -357,6 +361,10 @@ void shutdown_executor(void) /* {{{ */
 	}
 #endif
 
+	/* may be used by zend_error before init_executor */
+	EG(error_handling) = EH_NORMAL;
+	EG(exception) = NULL;
+
 	zend_try {
 		zend_objects_store_free_object_storage(&EG(objects_store));
 
@@ -401,8 +409,6 @@ void shutdown_executor(void) /* {{{ */
 	memset(&EG(user_exception_handlers), 0, sizeof(EG(user_exception_handlers)));
 	EG(objects_store).object_buckets = NULL;
 	EG(objects_store).top = 1;
-	EG(error_handling) = EH_NORMAL;
-	EG(exception) = NULL;
 
 	zend_shutdown_fpu();
 
