@@ -27,6 +27,13 @@
 #include "../TSRM/TSRM.h"
 #include "zend.h"
 
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+#ifdef ZEND_WIN32
+# include <process.h>
+#endif
+
 typedef struct _zend_leak_info {
 	void *addr;
 	size_t size;
@@ -110,6 +117,12 @@ void zend_debug_alloc_output(char *format, ...);
 
 ZEND_API size_t zend_memory_usage(int real_usage TSRMLS_DC);
 ZEND_API size_t zend_memory_peak_usage(int real_usage TSRMLS_DC);
+
+#if defined(__GNUC__) && __GNUC__ >= 3 && !defined(__INTEL_COMPILER) && !defined(DARWIN) && !defined(__hpux) && !defined(_AIX) && !defined(__osf__)
+ZEND_API void zend_mm_safe_error_ex(const char *format, ...) __attribute__ ((noreturn));
+#else
+ZEND_API void zend_mm_safe_error_ex(const char *format, ...);
+#endif
 
 END_EXTERN_C()
 
