@@ -278,6 +278,10 @@ void shutdown_executor(TSRMLS_D) /* {{{ */
 		zend_ptr_stack_clean(&EG(user_exception_handlers), ZVAL_DESTRUCTOR, 1);
 	} zend_end_try();
 
+	/* may be used by zend_error before init_executor */
+	EG(user_error_handler) = NULL;
+	EG(user_exception_handler) = NULL;
+
 	zend_try {
 		/* Cleanup static data for functions and arrays.
 		 * We need a separate cleanup stage because of the following problem:
@@ -295,6 +299,10 @@ void shutdown_executor(TSRMLS_D) /* {{{ */
 		}
 		zend_hash_apply(EG(class_table), (apply_func_t) zend_cleanup_class_data TSRMLS_CC);
 	} zend_end_try();
+
+	/* may be used by zend_error before init_executor */
+	EG(error_handling) = EH_NORMAL;
+	EG(exception) = NULL;
 
 	zend_try {
 		zend_vm_stack_destroy(TSRMLS_C);
@@ -333,6 +341,7 @@ void shutdown_executor(TSRMLS_D) /* {{{ */
 		zend_ptr_stack_destroy(&EG(user_error_handlers));
 		zend_ptr_stack_destroy(&EG(user_exception_handlers));
 		zend_objects_store_destroy(&EG(objects_store));
+		EG(objects_store).top = 1;
 		if (EG(in_autoload)) {
 			zend_hash_destroy(EG(in_autoload));
 			FREE_HASHTABLE(EG(in_autoload));
