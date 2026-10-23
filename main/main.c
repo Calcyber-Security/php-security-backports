@@ -1785,6 +1785,8 @@ void php_request_shutdown_for_hook(void *dummy)
 		for (i = 0; i < NUM_TRACK_VARS; i++) {
 			if (PG(http_globals)[i]) {
 				zval_ptr_dtor(&PG(http_globals)[i]);
+				/* May be accessed before php_request_startup() */
+				PG(http_globals)[i] = NULL;
 			}
 		}
 	} zend_end_try();
