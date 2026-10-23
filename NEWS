@@ -1,5 +1,11 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+23 Oct 2026, PHP 5.2.0-p1
+- Fixed GHSA-w8hw-w9fx-j79w (Avoid state corruption via bailout).
+  (CVE-2026-109618) (Arnaud, ilutov)
+- Fixed GHSA-6wmf-4rv5-p3rp (Avoid state corruption via bailout).
+  (CVE-2026-109619) (Arnaud, ilutov)
+
 02 Nov 2006, PHP 5.2.0
 - Updated bundled OpenSSL to version 0.9.8d in the Windows distro. (Edin)
 - Updated Postgresql client libraries to 8.1.4 in the Windows distro. (Edin)
