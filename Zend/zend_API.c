@@ -1064,6 +1064,15 @@ ZEND_API int _array_init(zval *arg, uint32_t size ZEND_FILE_LINE_DC) /* {{{ */
 }
 /* }}} */
 
+ZEND_API int _array_init_singleton(zval *arg ZEND_FILE_LINE_DC) /* {{{ */
+{
+	ZVAL_NEW_ARR(arg);
+	_zend_hash_init(Z_ARRVAL_P(arg), 0, ZVAL_PTR_DTOR, 0 ZEND_FILE_LINE_RELAY_CC);
+	Z_ARRVAL_P(arg)->nTableSize = 1;
+	return SUCCESS;
+}
+/* }}} */
+
 /* This function should be called after the constructor has been called
  * because it may call __set from the uninitialized object otherwise. */
 ZEND_API void zend_merge_properties(zval *obj, HashTable *properties) /* {{{ */
