@@ -1,6 +1,14 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-20 Jul 2017, PHP 7.1.8RC1
+23 Oct 2026, PHP 7.1.8-p1
+
+- Core:
+  . Fixed GHSA-w8hw-w9fx-j79w (Avoid state corruption via bailout).
+    (CVE-2026-109618) (Arnaud, ilutov)
+  . Fixed GHSA-6wmf-4rv5-p3rp (Avoid state corruption via bailout).
+    (CVE-2026-109619) (Arnaud, ilutov)
+
+03 Aug 2017, PHP 7.1.8
 
 - Core:
   . Fixed bug #74832 (Loading PHP extension with already registered function 
