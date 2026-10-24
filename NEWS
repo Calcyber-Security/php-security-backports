@@ -1,19 +1,25 @@
 PHP                                                                        NEWS
 |||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-?? ??? ????, PHP 8.1.9
+23 Oct 2026, PHP 8.1.9-p1
+
+- Core:
+  . Fixed GHSA-w8hw-w9fx-j79w (Avoid state corruption via bailout).
+    (CVE-2026-109618) (Arnaud, ilutov)
+  . Fixed GHSA-6wmf-4rv5-p3rp (Avoid state corruption via bailout).
+    (CVE-2026-109619) (Arnaud, ilutov)
+
+04 Aug 2022, PHP 8.1.9
 
 - CLI:
   . Fixed potential overflow for the builtin server via the PHP_CLI_SERVER_WORKERS
     environment variable. (yiyuaner)
+  . Fixed GH-8952 (Intentionally closing std handles no longer possible).
+    (Arnaud, cmb)
 
 - Core:
   . Fixed bug GH-8923 (error_log on Windows can hold the file write lock). (cmb)
   . Fixed bug GH-8995 (WeakMap object reference offset causing TypeError).
     (Tobias Bachert)
-
-- CLI:
-  . Fixed GH-8952 (Intentionally closing std handles no longer possible).
-    (Arnaud, cmb)
 
 - Date:
   . Fixed bug #80047 (DatePeriod doesn't warn with custom DateTimeImmutable).
