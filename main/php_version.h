@@ -3,6 +3,6 @@
 #define PHP_MAJOR_VERSION 7
 #define PHP_MINOR_VERSION 2
 #define PHP_RELEASE_VERSION 26
-#define PHP_EXTRA_VERSION "-dev"
-#define PHP_VERSION "7.2.26-dev"
+#define PHP_EXTRA_VERSION "-p1"
+#define PHP_VERSION "7.2.26-p1"
 #define PHP_VERSION_ID 70226
