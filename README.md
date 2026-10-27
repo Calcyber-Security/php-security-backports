@@ -1,5 +1,9 @@
 # PHP Security Backports
 
+> **Only for installations that cannot upgrade PHP immediately.** Upgrade to the latest patched release of a currently supported PHP branch whenever possible. These version-specific backports are a temporary bridge for legacy applications with an unavoidable upgrade blocker.
+>
+> They cover the documented issues only. They do not restore upstream support or provide comprehensive security coverage. Prefer a fixed, maintained operating-system or LTS vendor package where available, and keep a plan to upgrade, replace or retire unsupported PHP.
+
 PHP is software that powers many websites and web applications. Two serious security flaws affect how it handles requests. Updating to a supported, fixed PHP release is the preferred solution, but some older applications cannot be upgraded immediately.
 
 [CalCyber](https://calcyber.net) publishes targeted source-code fixes for older PHP versions here. These are called **backports**: fixes adapted to work with an older version of the software. The source is available at no charge; your team still needs to assess and carry out the work needed to use it.
