@@ -1,6 +1,12 @@
 # PHP Security Backports
 
-Source backports for **CVE-2026-109618** and **CVE-2026-109619**, published by [CalCyber](https://calcyber.net) for review and version-specific evaluation of legacy PHP installations.
+PHP is software that powers many websites and web applications. Two serious security flaws affect how it handles requests. Updating to a supported, fixed PHP release is the preferred solution, but some older applications cannot be upgraded immediately.
+
+[CalCyber](https://calcyber.net) publishes targeted source-code fixes for older PHP versions here. These are called **backports**: fixes adapted to work with an older version of the software. The source is available at no charge; your team still needs to assess and carry out the work needed to use it.
+
+An administrator or developer must choose the fix for your exact PHP version, build it, test it with your website, and install it safely. This is not a WordPress plugin or a one-click installer. If you are unsure where to start, [reach out to CalCyber](https://calcyber.net).
+
+These fixes address two specific flaws, **CVE-2026-109618** and **CVE-2026-109619**. They do not fix every problem in an old PHP version or bring it back into full support. Treat them as a targeted measure while planning a supported upgrade.
 
 **Prefer an upgrade to a supported PHP release or a maintained vendor package.** These backports do not restore upstream support to an end-of-life PHP version and do not address every vulnerability in that version. Consult [PHP's current support policy](https://www.php.net/supported-versions.php).
 
@@ -8,11 +14,11 @@ Read the [CalCyber PHP2Shell explainer](https://calcyber.net/php2shell.html) for
 
 ## What is here
 
-This repository preserves the branch and tag history imported from [zach115th/php-src](https://github.com/zach115th/php-src). At the 27 October 2026 import, it contained **1,050 source branches and 1,535 tags**, including **425 branches with CVE-specific names**. Those names indicate intended patch coverage, not a tested compatibility or support guarantee.
+The [CalCyber PHP Security Backports repository](https://github.com/Calcyber-Security/php-security-backports) preserves PHP source branches and tags. As of 27 October 2026, it contained **1,050 source branches and 1,535 tags**, including **425 branches with CVE-specific names**. Those names indicate intended patch coverage, not a tested compatibility or support guarantee.
 
 The `main` branch is this landing page. It is **not a patched PHP source tree**. Historical branches, upstream development branches and tags are also present; selecting generic `master` or an ordinary version tag does not select a security backport.
 
-This project distributes source history. The import did not create release packages or binaries, and no blanket build, regression-test or production-readiness claim is made for the imported branches.
+This project distributes source history. No release packages or binaries are provided here, and no blanket build, regression-test or production-readiness claim is made for these branches.
 
 ## Choose an exact version
 
@@ -51,7 +57,7 @@ Use the advisories and current PHP guidance to assess affected versions and supp
 
 ## Provenance and credits
 
-The minimal EOL mitigation originates with PHP contributors **Arnaud Le Blanc and Ilija Tovilo**. Upstream PHP 7.4, 8.0 and 8.1 series mitigation work is distinct from the older version-specific adaptations carried in the imported source repository. CalCyber's publication preserves that provenance rather than claiming authorship of those patches.
+The minimal EOL mitigation originates with PHP contributors **Arnaud Le Blanc and Ilija Tovilo**. Upstream PHP 7.4, 8.0 and 8.1 series mitigation work is distinct from the older version-specific adaptations available in this repository. CalCyber's publication preserves that provenance rather than claiming authorship of those patches.
 
 Useful preserved history includes:
 
@@ -60,3 +66,7 @@ Useful preserved history includes:
 - [b99a3c1391a4763ed5b4b89b08940fe1609e1341](https://github.com/Calcyber-Security/php-security-backports/commit/b99a3c1391a4763ed5b4b89b08940fe1609e1341): follow-up review fixes for an older backport. Its historical test report applies to the described revision and environment, not all 425 CVE-named branches.
 
 Consult individual commits for the complete attribution, including AI-assisted adaptation credits recorded by the source project. Existing source-file notices and each branch's license files remain authoritative; this landing page does not replace them or introduce a new license for PHP or bundled components.
+
+## Need help?
+
+If you need help selecting the right backport or planning a safe deployment, reach out to [CalCyber](https://calcyber.net).
