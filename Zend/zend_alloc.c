@@ -2320,7 +2320,7 @@ static inline size_t safe_address(size_t nmemb, size_t size, size_t offset)
 	       "rm"(offset));
 	
 	if (UNEXPECTED(overflow)) {
-		zend_mm_safe_error_ex("Possible integer overflow in memory allocation (%zu * %zu + %zu)", nmemb, size, offset);
+		zend_mm_safe_error_ex("Possible integer overflow in memory allocation (%lu * %lu + %lu)", (unsigned long) nmemb, (unsigned long) size, (unsigned long) offset);
 		return 0;
 	}
 	return res;
@@ -2340,7 +2340,7 @@ static inline size_t safe_address(size_t nmemb, size_t size, size_t offset)
                "rm"(offset));
 
         if (UNEXPECTED(overflow)) {
-                zend_mm_safe_error_ex("Possible integer overflow in memory allocation (%zu * %zu + %zu)", nmemb, size, offset);
+                zend_mm_safe_error_ex("Possible integer overflow in memory allocation (%lu * %lu + %lu)", (unsigned long) nmemb, (unsigned long) size, (unsigned long) offset);
                 return 0;
         }
         return res;
@@ -2355,7 +2355,7 @@ static inline size_t safe_address(size_t nmemb, size_t size, size_t offset)
 	double _delta = (double)res - _d;
 
 	if (UNEXPECTED((_d + _delta ) != _d)) {
-		zend_mm_safe_error_ex("Possible integer overflow in memory allocation (%zu * %zu + %zu)", nmemb, size, offset);
+		zend_mm_safe_error_ex("Possible integer overflow in memory allocation (%lu * %lu + %lu)", (unsigned long) nmemb, (unsigned long) size, (unsigned long) offset);
 		return 0;
 	}
 	return res;
