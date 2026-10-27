@@ -113,9 +113,9 @@ static long mem_block_end_magic = MEM_BLOCK_END_MAGIC;
 									int php_mem_limit = AG(memory_limit); \
 									AG(allocated_memory) -= rs; \
 									if (file) { \
-										zend_mm_safe_error_ex("Allowed memory size of %d bytes exhausted at %s:%d (tried to allocate %zu bytes)", php_mem_limit, (const char *) (file), lineno, (size_t) (s)); \
+										zend_mm_safe_error_ex("Allowed memory size of %d bytes exhausted at %s:%d (tried to allocate %lu bytes)", php_mem_limit, (const char *) (file), lineno, (unsigned long) (s)); \
 									} else { \
-										zend_mm_safe_error_ex("Allowed memory size of %d bytes exhausted (tried to allocate %zu bytes)", php_mem_limit, (size_t) (s)); \
+										zend_mm_safe_error_ex("Allowed memory size of %d bytes exhausted (tried to allocate %lu bytes)", php_mem_limit, (unsigned long) (s)); \
 									} \
 								} \
 							}
@@ -266,7 +266,7 @@ ZEND_API void *_safe_emalloc(size_t nmemb, size_t size, size_t offset ZEND_FILE_
 		}
 	}
 
-	zend_mm_safe_error_ex("Possible integer overflow in memory allocation (%zd * %zd + %zd)", nmemb, size, offset);
+	zend_mm_safe_error_ex("Possible integer overflow in memory allocation (%lu * %lu + %lu)", (unsigned long) nmemb, (unsigned long) size, (unsigned long) offset);
 	return 0;
 }
 
