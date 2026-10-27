@@ -1,16 +1,16 @@
 # PHP Security Backports
 
-> **Only for installations that cannot upgrade PHP immediately.** Upgrade to the latest patched release of a currently supported PHP branch whenever possible. These version-specific backports are a temporary bridge for legacy applications with an unavoidable upgrade blocker.
+> **For legacy systems that cannot run a supported PHP release—including applications that cannot be upgraded at all.** Upgrade to supported, patched PHP whenever feasible. These version-specific backports provide targeted risk reduction for systems that must remain on legacy PHP, whether the upgrade is delayed or impossible for that application.
 >
-> They cover the documented issues only. They do not restore upstream support or provide comprehensive security coverage. Prefer a fixed, maintained operating-system or LTS vendor package where available, and keep a plan to upgrade, replace or retire unsupported PHP.
+> They cover documented issues only; they do not restore upstream support or provide comprehensive security coverage. Continued legacy operation requires ongoing maintenance, isolation, monitoring and security review. Prefer a fixed, maintained operating-system or LTS vendor package where available. Where upgrading is impossible, consider application replacement or system retirement as the longer-term path.
 
-PHP is software that powers many websites and web applications. Two serious security flaws affect how it handles requests. Updating to a supported, fixed PHP release is the preferred solution, but some older applications cannot be upgraded immediately.
+PHP is software that powers many websites and web applications. Two serious security flaws affect how it handles requests. Updating to a supported, fixed PHP release is preferred wherever feasible, but some older applications cannot run on a newer PHP version without being replaced.
 
 [CalCyber](https://calcyber.net) publishes targeted source-code fixes for older PHP versions here. These are called **backports**: fixes adapted to work with an older version of the software. The source is available at no charge; your team still needs to assess and carry out the work needed to use it.
 
 An administrator or developer must choose the fix for your exact PHP version, build it, test it with your website, and install it safely. This is not a WordPress plugin or a one-click installer. If you are unsure where to start, [reach out to CalCyber](https://calcyber.net).
 
-These fixes address two specific flaws, **CVE-2026-109618** and **CVE-2026-109619**. They do not fix every problem in an old PHP version or bring it back into full support. Treat them as a targeted measure while planning a supported upgrade.
+These fixes address two specific flaws, **CVE-2026-109618** and **CVE-2026-109619**. They do not fix every problem in an old PHP version or bring it back into full support. Treat them as a targeted measure for managing exposure where a supported upgrade is not feasible, not a promise of indefinite security or future patch coverage.
 
 **Prefer an upgrade to a supported PHP release or a maintained vendor package.** These backports do not restore upstream support to an end-of-life PHP version and do not address every vulnerability in that version. Consult [PHP's current support policy](https://www.php.net/supported-versions.php).
 
